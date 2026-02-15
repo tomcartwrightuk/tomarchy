@@ -49,9 +49,29 @@ sudo pacman -S --noconfirm --needed \
     ttf-jetbrains-mono \
     ttf-nerd-fonts-symbols
 
+# Install Bluetooth
+echo "==> Installing Bluetooth..."
+sudo pacman -S --noconfirm --needed bluez bluez-utils bluetui
+sudo systemctl enable --now bluetooth.service
+
+# Install power/battery management
+echo "==> Installing power management..."
+sudo pacman -S --noconfirm --needed power-profiles-daemon upower
+sudo systemctl enable --now power-profiles-daemon.service
+
+# Install fingerprint support (optional - run tomarchy-setup-fingerprint to configure)
+echo "==> Installing fingerprint support..."
+sudo pacman -S --noconfirm --needed fprintd
+
 # Copy Tomarchy config files to ~/.config
 echo "==> Installing Tomarchy config files..."
 cp -rn "$TOMARCHY_PATH/config/"* ~/.config/
+
+# Install Tomarchy scripts
+echo "==> Installing Tomarchy scripts..."
+mkdir -p ~/.local/bin
+cp "$TOMARCHY_PATH/bin/"* ~/.local/bin/
+chmod +x ~/.local/bin/tomarchy-*
 
 # Configure Hyprland to start automatically on TTY1 login
 echo "==> Configuring automatic Hyprland start on login..."
@@ -70,6 +90,9 @@ echo "    - System packages upgraded"
 echo "    - Git installed"
 echo "    - mise installed (restart shell or run 'source ~/.bashrc')"
 echo "    - NetworkManager installed (click network icon in waybar or run 'nmtui')"
+echo "    - Bluetooth installed (click bluetooth icon in waybar or run 'bluetui')"
+echo "    - Power management installed (use 'powerprofilesctl' to manage)"
+echo "    - Fingerprint support installed (run 'tomarchy-setup-fingerprint' to enroll)"
 echo "    - Hyprland and waybar installed and configured to autostart"
 echo "    - Config files installed to ~/.config/"
 echo ""

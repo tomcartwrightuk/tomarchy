@@ -27,12 +27,16 @@ window#waybar {
 }
 
 #clock,
+#bluetooth,
 #network,
 #pulseaudio,
-#cpu,
-#memory,
 #battery {
   padding: 0 12px;
+}
+
+#bluetooth.off,
+#bluetooth.disabled {
+  color: #6c7086;
 }
 
 #network.disconnected {

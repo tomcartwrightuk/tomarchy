@@ -1,0 +1,128 @@
+#!/bin/bash
+# Tomarchy Fingerprint Setup
+# Enrolls fingerprints and configures sudo/polkit for fingerprint auth
+
+set -e
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+NC='\033[0m'
+
+info() { echo -e "${BLUE}==>${NC} $1"; }
+success() { echo -e "${GREEN}==>${NC} $1"; }
+error() { echo -e "${RED}==>${NC} $1"; }
+
+# Check if fprintd is installed
+if ! command -v fprintd-enroll &>/dev/null; then
+  error "fprintd is not installed. Run: sudo pacman -S fprintd"
+  exit 1
+fi
+
+# Check for fingerprint hardware
+check_hardware() {
+  info "Checking for fingerprint sensor..."
+  if ! fprintd-list "$USER" &>/dev/null; then
+    error "No fingerprint sensor detected or fprintd service not running."
+    echo "Try: sudo systemctl start fprintd.service"
+    exit 1
+  fi
+  success "Fingerprint sensor detected!"
+}
+
+# Configure sudo for fingerprint
+configure_sudo() {
+  if ! grep -q pam_fprintd.so /etc/pam.d/sudo 2>/dev/null; then
+    info "Configuring sudo for fingerprint authentication..."
+    sudo sed -i '1i auth    sufficient pam_fprintd.so' /etc/pam.d/sudo
+    success "Sudo configured for fingerprint!"
+  else
+    info "Sudo already configured for fingerprint."
+  fi
+}
+
+# Configure polkit for fingerprint
+configure_polkit() {
+  if [[ -f /etc/pam.d/polkit-1 ]] && ! grep -q 'pam_fprintd.so' /etc/pam.d/polkit-1; then
+    info "Configuring polkit for fingerprint authentication..."
+    sudo sed -i '1i auth      sufficient pam_fprintd.so' /etc/pam.d/polkit-1
+    success "Polkit configured for fingerprint!"
+  elif [[ ! -f /etc/pam.d/polkit-1 ]]; then
+    info "Creating polkit configuration with fingerprint..."
+    sudo tee /etc/pam.d/polkit-1 >/dev/null <<'EOF'
+auth      sufficient pam_fprintd.so
+auth      include    system-auth
+account   include    system-auth
+password  include    system-auth
+session   include    system-auth
+EOF
+    success "Polkit configured for fingerprint!"
+  else
+    info "Polkit already configured for fingerprint."
+  fi
+}
+
+# Enroll fingerprint
+enroll_fingerprint() {
+  success "Let's enroll your fingerprint (right index finger recommended)."
+  echo ""
+  echo "Place your finger on the sensor multiple times when prompted."
+  echo ""
+  
+  if sudo fprintd-enroll "$USER"; then
+    success "Fingerprint enrolled successfully!"
+    
+    echo ""
+    info "Verifying fingerprint..."
+    if fprintd-verify; then
+      success "Fingerprint verification passed!"
+    else
+      error "Fingerprint verification failed. Try enrolling again."
+      exit 1
+    fi
+  else
+    error "Fingerprint enrollment failed."
+    exit 1
+  fi
+}
+
+# Remove fingerprint config
+remove_fingerprint() {
+  info "Removing fingerprint authentication..."
+  
+  if grep -q pam_fprintd.so /etc/pam.d/sudo 2>/dev/null; then
+    sudo sed -i '/pam_fprintd\.so/d' /etc/pam.d/sudo
+    success "Removed from sudo."
+  fi
+  
+  if [[ -f /etc/pam.d/polkit-1 ]] && grep -q 'pam_fprintd.so' /etc/pam.d/polkit-1; then
+    sudo sed -i '/pam_fprintd\.so/d' /etc/pam.d/polkit-1
+    success "Removed from polkit."
+  fi
+  
+  info "Deleting enrolled fingerprints..."
+  sudo fprintd-delete "$USER" 2>/dev/null || true
+  
+  success "Fingerprint authentication removed."
+}
+
+# Main
+case "${1:-}" in
+  --remove|-r)
+    remove_fingerprint
+    ;;
+  *)
+    check_hardware
+    configure_sudo
+    configure_polkit
+    enroll_fingerprint
+    
+    echo ""
+    success "Fingerprint setup complete!"
+    echo "    You can now use your fingerprint for:"
+    echo "    - sudo commands"
+    echo "    - Polkit authentication dialogs"
+    echo ""
+    echo "    To remove: tomarchy-setup-fingerprint --remove"
+    ;;
+esac

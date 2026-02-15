@@ -6,7 +6,7 @@
 
   "modules-left": ["hyprland/workspaces"],
   "modules-center": ["clock"],
-  "modules-right": ["network", "pulseaudio", "cpu", "memory", "battery"],
+  "modules-right": ["bluetooth", "network", "pulseaudio", "battery"],
 
   "hyprland/workspaces": {
     "on-click": "activate",
@@ -16,6 +16,19 @@
   "clock": {
     "format": "{:%a %d %b  %H:%M}",
     "tooltip-format": "{:%Y-%m-%d}"
+  },
+
+  "bluetooth": {
+    "format": "󰂯",
+    "format-connected": "󰂱 {device_alias}",
+    "format-connected-battery": "󰂱 {device_alias} {device_battery_percentage}%",
+    "format-off": "󰂲",
+    "format-disabled": "󰂲",
+    "tooltip-format": "{controller_alias}\n{num_connections} connected",
+    "tooltip-format-connected": "{controller_alias}\n{num_connections} connected\n\n{device_enumerate}",
+    "tooltip-format-enumerate-connected": "{device_alias}",
+    "tooltip-format-enumerate-connected-battery": "{device_alias} {device_battery_percentage}%",
+    "on-click": "kitty --class floating -e bluetui"
   },
 
   "network": {
@@ -36,16 +49,6 @@
     "on-click": "pamixer -t",
     "on-scroll-up": "pamixer -i 5",
     "on-scroll-down": "pamixer -d 5"
-  },
-
-  "cpu": {
-    "format": "󰍛 {usage}%",
-    "interval": 5
-  },
-
-  "memory": {
-    "format": "󰘚 {percentage}%",
-    "interval": 5
   },
 
   "battery": {
