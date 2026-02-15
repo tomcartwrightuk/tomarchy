@@ -1,0 +1,6 @@
+[submodule "omarchy"]
+	path = omarchy
+	url = https://github.com/basecamp/omarchy
+[submodule "dotfiles"]
+	path = dotfiles
+	url = https://github.com/coffebar/dotfiles.git
