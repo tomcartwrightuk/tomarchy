@@ -37,6 +37,7 @@ sudo systemctl enable --now NetworkManager
 echo "==> Installing Hyprland and dependencies..."
 sudo pacman -S --noconfirm --needed \
     hyprland \
+    uwsm \
     xdg-desktop-portal-hyprland \
     kitty \
     waybar \
@@ -73,14 +74,14 @@ mkdir -p ~/.local/bin
 cp "$TOMARCHY_PATH/bin/"* ~/.local/bin/
 chmod +x ~/.local/bin/tomarchy-*
 
-# Configure Hyprland to start automatically on TTY1 login
+# Configure Hyprland to start automatically on TTY1 login via uwsm
 echo "==> Configuring automatic Hyprland start on login..."
-if ! grep -q "Hyprland" ~/.bash_profile 2>/dev/null; then
+if ! grep -q "uwsm" ~/.bash_profile 2>/dev/null; then
     cat >> ~/.bash_profile << 'EOF'
 
-# Start Hyprland automatically on TTY1
+# Start Hyprland automatically on TTY1 via uwsm (proper session management)
 if [ -z "$DISPLAY" ] && [ "$XDG_VTNR" = 1 ]; then
-    exec Hyprland
+    exec uwsm start hyprland
 fi
 EOF
 fi

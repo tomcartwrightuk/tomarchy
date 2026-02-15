@@ -28,7 +28,7 @@
     "tooltip-format-connected": "{controller_alias}\n{num_connections} connected\n\n{device_enumerate}",
     "tooltip-format-enumerate-connected": "{device_alias}",
     "tooltip-format-enumerate-connected-battery": "{device_alias} {device_battery_percentage}%",
-    "on-click": "kitty --class floating -e bluetui"
+    "on-click": "uwsm-app -- kitty --class floating -e bluetui"
   },
 
   "network": {
@@ -37,7 +37,7 @@
     "format-disconnected": "󰤮 Disconnected",
     "tooltip-format-wifi": "{essid} ({signalStrength}%)\n{ipaddr}",
     "tooltip-format-ethernet": "{ipaddr}",
-    "on-click": "kitty --class floating -e nmtui"
+    "on-click": "uwsm-app -- kitty --class floating -e nmtui"
   },
 
   "pulseaudio": {
