@@ -79,9 +79,9 @@ echo "==> Configuring automatic Hyprland start on login..."
 if ! grep -q "uwsm" ~/.bash_profile 2>/dev/null; then
     cat >> ~/.bash_profile << 'EOF'
 
-# Start Hyprland automatically on TTY1 via uwsm (proper session management)
-if [ -z "$DISPLAY" ] && [ "$XDG_VTNR" = 1 ]; then
-    exec uwsm start hyprland
+# Start Hyprland via uwsm on TTY1
+if [[ -z $DISPLAY && $(tty) == /dev/tty1 ]]; then
+    exec uwsm start hyprland-uwsm.desktop
 fi
 EOF
 fi
