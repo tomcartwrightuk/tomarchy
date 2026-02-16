@@ -2,5 +2,8 @@
 	path = omarchy
 	url = https://github.com/basecamp/omarchy
 [submodule "dotfiles"]
-	path = dotfiles
+	path = coffee
 	url = https://github.com/coffebar/dotfiles.git
+[submodule "ml4w"]
+	path = ml4w
+	url = git@github.com:mylinuxforwork/dotfiles.git
