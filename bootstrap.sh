@@ -28,9 +28,9 @@ echo "==> Installing mise..."
 curl https://mise.run | sh
 echo 'eval "$(~/.local/bin/mise activate bash)"' >> ~/.bashrc
 
-# Install wifi tools (NetworkManager)
+# Install wifi tools (NetworkManager + GUI)
 echo "==> Installing and configuring wifi tools..."
-sudo pacman -S --noconfirm --needed networkmanager
+sudo pacman -S --noconfirm --needed networkmanager network-manager-applet nm-connection-editor
 sudo systemctl enable --now NetworkManager
 
 # Install Hyprland and essential packages
@@ -90,7 +90,7 @@ echo "==> Tomarchy bootstrap complete!"
 echo "    - System packages upgraded"
 echo "    - Git installed"
 echo "    - mise installed (restart shell or run 'source ~/.bashrc')"
-echo "    - NetworkManager installed (click network icon in waybar or run 'nmtui')"
+echo "    - NetworkManager installed (tray icon, or run 'nm-connection-editor' / 'nmtui')"
 echo "    - Bluetooth installed (click bluetooth icon in waybar or run 'bluetui')"
 echo "    - Power management installed (use 'powerprofilesctl' to manage)"
 echo "    - Fingerprint support installed (run 'tomarchy-setup-fingerprint' to enroll)"

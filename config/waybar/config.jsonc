@@ -6,7 +6,7 @@
 
   "modules-left": ["hyprland/workspaces"],
   "modules-center": ["clock"],
-  "modules-right": ["bluetooth", "network", "pulseaudio", "battery"],
+  "modules-right": ["tray", "bluetooth", "network", "pulseaudio", "battery"],
 
   "hyprland/workspaces": {
     "on-click": "activate",
@@ -37,7 +37,12 @@
     "format-disconnected": "󰤮 Disconnected",
     "tooltip-format-wifi": "{essid} ({signalStrength}%)\n{ipaddr}",
     "tooltip-format-ethernet": "{ipaddr}",
-    "on-click": "uwsm-app -- kitty --class floating -e nmtui"
+    "on-click": "uwsm-app -- nm-connection-editor"
+  },
+
+  "tray": {
+    "icon-size": 16,
+    "spacing": 8
   },
 
   "pulseaudio": {
