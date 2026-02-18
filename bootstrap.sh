@@ -23,10 +23,28 @@ sudo pacman -Syu --noconfirm
 echo "==> Installing git..."
 sudo pacman -S --noconfirm --needed git
 
+# Install yay (AUR helper)
+echo "==> Installing yay..."
+if ! command -v yay &> /dev/null; then
+    TEMP_YAY_DIR=$(mktemp -d)
+    cd "$TEMP_YAY_DIR"
+    git clone https://aur.archlinux.org/yay.git
+    cd yay
+    makepkg -si --noconfirm
+    cd ~
+    rm -rf "$TEMP_YAY_DIR"
+else
+    echo "    yay is already installed"
+fi
+
 # Install mise (version manager for dev tools)
 echo "==> Installing mise..."
 curl https://mise.run | sh
 echo 'eval "$(~/.local/bin/mise activate bash)"' >> ~/.bashrc
+
+# Install Google Chrome
+echo "==> Installing Google Chrome..."
+yay -S --noconfirm --needed google-chrome
 
 # Install wifi tools (NetworkManager + GUI)
 echo "==> Installing and configuring wifi tools..."
@@ -47,6 +65,7 @@ sudo pacman -S --noconfirm --needed \
     pipewire-pulse \
     wireplumber \
     pamixer \
+    less \
     ttf-jetbrains-mono \
     ttf-nerd-fonts-symbols
 
@@ -89,7 +108,9 @@ fi
 echo "==> Tomarchy bootstrap complete!"
 echo "    - System packages upgraded"
 echo "    - Git installed"
+echo "    - yay (AUR helper) installed"
 echo "    - mise installed (restart shell or run 'source ~/.bashrc')"
+echo "    - Google Chrome installed"
 echo "    - NetworkManager installed (tray icon, or run 'nm-connection-editor' / 'nmtui')"
 echo "    - Bluetooth installed (click bluetooth icon in waybar or run 'bluetui')"
 echo "    - Power management installed (use 'powerprofilesctl' to manage)"
